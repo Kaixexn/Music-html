@@ -299,7 +299,9 @@
   <div class="results" id="results"></div>
 
   <div class="now-playing">
-    <img class="np-art" id="npArt" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMjgiIGZpbGw9IiMzMzMzMzMiLz4KPHRleHQgeD0iMzAiIHk9IjM1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU3BhY2UgTW9ubyIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk1NTlmZiI+bm8gc29uZzwvdGV4dD4KPC9zdmc+" alt="album art">
+    <img class="np-art" id="npArt"
+      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyOCIgZmlsbD0iIzFlMWUzYSIvPjx0ZXh0IHg9IjMwIiB5PSIzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMCIgZmlsbD0iIzliNTlmZiI+bm8gc29uZzwvdGV4dD48L3N2Zz4="
+      alt="album art">
     <div class="np-info">
       <div class="np-tag">▶ now_playing</div>
       <div class="np-title" id="npTitle">Search for a song...</div>
@@ -321,15 +323,15 @@
 
   <div class="controls">
     <button class="ctrl-btn" id="btnShuffle" title="shuffle">⇄</button>
-    <button class="ctrl-btn" onclick="prevTrack()">◀◀</button>
-    <button class="ctrl-btn play" id="btnPlay" onclick="togglePlay()">▶</button>
-    <button class="ctrl-btn" onclick="nextTrack()">▶▶</button>
+    <button class="ctrl-btn" id="btnPrev">◀◀</button>
+    <button class="ctrl-btn play" id="btnPlay">▶</button>
+    <button class="ctrl-btn" id="btnNext">▶▶</button>
     <button class="ctrl-btn" id="btnLoop" title="loop">↺</button>
   </div>
 
   <div class="vol-row">
     <span class="vol-label">VOL</span>
-    <input type="range" id="volSlider" min="0" max="100" value="80" step="1" oninput="setVolume(this.value)">
+    <input type="range" id="volSlider" min="0" max="100" value="80">
     <span class="vol-val" id="volVal">80%</span>
   </div>
 
@@ -339,27 +341,38 @@
   </div>
 </div>
 
-<audio id="audioEl" crossorigin="anonymous"></audio>
+<audio id="audioEl" crossorigin="anonymous" preload="metadata"></audio>
 
 <script>
-const audio = document.getElementById('audioEl');
-const searchEl = document.getElementById('searchInput');
-const resultsEl = document.getElementById('results');
-const npArt = document.getElementById('npArt');
-const npTitle = document.getElementById('npTitle');
-const npArtist = document.getElementById('npArtist');
-const btnPlay = document.getElementById('btnPlay');
-const btnLoop = document.getElementById('btnLoop');
-const btnShuf = document.getElementById('btnShuffle');
-const progFill = document.getElementById('progressFill');
-const timeCur = document.getElementById('timeCur');
-const timeTot = document.getElementById('timeTot');
-const vizWrap = document.getElementById('vizWrap');
+const audio        = document.getElementById('audioEl');
+const searchEl     = document.getElementById('searchInput');
+const resultsEl    = document.getElementById('results');
+const npArt        = document.getElementById('npArt');
+const npTitle      = document.getElementById('npTitle');
+const npArtist     = document.getElementById('npArtist');
+const btnPlay      = document.getElementById('btnPlay');
+const btnLoop      = document.getElementById('btnLoop');
+const btnShuf      = document.getElementById('btnShuffle');
+const btnPrev      = document.getElementById('btnPrev');
+const btnNext      = document.getElementById('btnNext');
+const progFill     = document.getElementById('progressFill');
+const timeCur      = document.getElementById('timeCur');
+const timeTot      = document.getElementById('timeTot');
+const vizWrap      = document.getElementById('vizWrap');
 const progressWrap = document.getElementById('progressWrap');
+const volSlider    = document.getElementById('volSlider');
+const volVal       = document.getElementById('volVal');
 
-let tracks = [], currentIdx = 0, shuffle = false, looping = false;
-let vizBars = [], vizTimer = null;
-let searchTimer;
+let tracks = [];
+let currentIdx = 0;
+let shuffle = false;
+let looping = false;
+let vizBars = [];
+let vizTimer = null;
+let searchTimer = null;
+let isPlaying = false;
+
+audio.volume = 0.8;
 
 for (let i = 0; i < 40; i++) {
   const b = document.createElement('div');
@@ -368,51 +381,207 @@ for (let i = 0; i < 40; i++) {
   vizBars.push(b);
 }
 
-function animateViz(playing) {
+function fmt(s) {
+  if (!s || isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+
+function animateViz() {
   clearInterval(vizTimer);
-  if (!playing) {
+  if (!isPlaying) {
     vizBars.forEach(b => b.style.height = '4px');
     return;
   }
   vizTimer = setInterval(() => {
-    vizBars.forEach((b, i) => {
-      const base = 4;
-      const wave = Math.sin(Date.now() / 200 + i * 0.4) * 12;
-      const rand = Math.random() * 20;
-      const h = Math.max(base, base + wave + rand);
+    vizBars.forEach(b => {
+      const h = isPlaying ? Math.random() * 32 + 4 : 4;
       b.style.height = h + 'px';
     });
-  }, 80);
+  }, 120);
+}
+
+function setPlaying(state) {
+  isPlaying = state;
+  btnPlay.textContent = state ? '⏸' : '▶';
+  npArt.classList.toggle('spin', state);
+  animateViz();
 }
 
 async function fetchTracks(q) {
-  if (q.length < 2) return;
-  
+  if (q.length < 2) {
+    resultsEl.classList.remove('show');
+    return;
+  }
+
   resultsEl.innerHTML = '<div class="result-empty">🔍 searching...</div>';
   resultsEl.classList.add('show');
-  
-  const proxies = [
-    'https://api.codetabs.com/v1/proxy?quest=',
-    'https://corsproxy.io/?',
-    'https://thingproxy.freeboard.io/fetch/'
-  ];
-  
-  const baseUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=15&entity=song`;
-  
-  for (const proxy of proxies) {
-    try {
-      const url = proxy + encodeURIComponent(baseUrl);
-      const res = await fetch(url);
-      
-      if (!res.ok) continue;
-      
-      let data;
-      if (proxy.includes('codetabs')) {
-        data = await res.json();
-      } else {
-        const text = await res.text();
-        data = JSON.parse(text);
-      }
-      
-      tracks = data.results?.filter
-      
+
+  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=15&entity=song&callback=itunesCallback`;
+
+  window.itunesCallback = function(data) {
+    tracks = (data.results || []).filter(t => t.previewUrl);
+    if (!tracks.length) {
+      resultsEl.innerHTML = '<div class="result-empty">no results found</div>';
+      return;
+    }
+    renderResults();
+    delete window.itunesCallback;
+  };
+
+  const existing = document.getElementById('itunesScript');
+  if (existing) existing.remove();
+
+  const script = document.createElement('script');
+  script.id = 'itunesScript';
+  script.onerror = () => {
+    resultsEl.innerHTML = '<div class="result-empty">search failed — check connection</div>';
+  };
+  script.src = url;
+  document.head.appendChild(script);
+}
+
+function renderResults() {
+  resultsEl.innerHTML = '';
+  tracks.forEach((t, i) => {
+    const el = document.createElement('div');
+    el.className = 'result-item' + (i === currentIdx && isPlaying ? ' active' : '');
+    el.innerHTML = `
+      <img class="result-art" src="${t.artworkUrl60}" alt="">
+      <div class="result-info">
+        <div class="result-name">${t.trackName}</div>
+        <div class="result-artist">${t.artistName} — ${t.collectionName || ''}</div>
+      </div>
+    `;
+    el.addEventListener('click', () => {
+      currentIdx = i;
+      loadTrack(i, true);
+      resultsEl.classList.remove('show');
+      searchEl.value = '';
+    });
+    resultsEl.appendChild(el);
+  });
+}
+
+function loadTrack(idx, autoplay) {
+  if (!tracks.length) return;
+  const t = tracks[idx];
+  audio.src = t.previewUrl;
+  npArt.src = t.artworkUrl100 || t.artworkUrl60;
+  npTitle.textContent = t.trackName;
+  npArtist.textContent = t.artistName;
+  progFill.style.width = '0%';
+  timeCur.textContent = '0:00';
+  timeTot.textContent = '0:30';
+  if (autoplay) {
+    audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+  }
+}
+
+btnPlay.addEventListener('click', () => {
+  if (!tracks.length) return;
+  if (!audio.src || audio.src === window.location.href) {
+    loadTrack(currentIdx, true);
+    return;
+  }
+  if (isPlaying) {
+    audio.pause();
+    setPlaying(false);
+  } else {
+    audio.play().then(() => setPlaying(true)).catch(() => {});
+  }
+});
+
+btnNext.addEventListener('click', () => {
+  if (!tracks.length) return;
+  if (shuffle) {
+    currentIdx = Math.floor(Math.random() * tracks.length);
+  } else {
+    currentIdx = (currentIdx + 1) % tracks.length;
+  }
+  loadTrack(currentIdx, true);
+});
+
+btnPrev.addEventListener('click', () => {
+  if (!tracks.length) return;
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+    return;
+  }
+  currentIdx = (currentIdx - 1 + tracks.length) % tracks.length;
+  loadTrack(currentIdx, true);
+});
+
+btnShuf.addEventListener('click', () => {
+  shuffle = !shuffle;
+  btnShuf.classList.toggle('active', shuffle);
+});
+
+btnLoop.addEventListener('click', () => {
+  looping = !looping;
+  audio.loop = looping;
+  btnLoop.classList.toggle('active', looping);
+});
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  progFill.style.transition = 'width 0.5s linear';
+  progFill.style.width = pct + '%';
+  timeCur.textContent = fmt(audio.currentTime);
+  timeTot.textContent = fmt(audio.duration);
+});
+
+audio.addEventListener('ended', () => {
+  if (!looping) {
+    if (shuffle) {
+      currentIdx = Math.floor(Math.random() * tracks.length);
+    } else {
+      currentIdx = (currentIdx + 1) % tracks.length;
+    }
+    loadTrack(currentIdx, true);
+  } else {
+    setPlaying(true);
+  }
+});
+
+audio.addEventListener('play',  () => setPlaying(true));
+audio.addEventListener('pause', () => setPlaying(false));
+
+audio.addEventListener('waiting', () => {
+  vizBars.forEach(b => b.style.height = '4px');
+});
+
+progressWrap.addEventListener('click', e => {
+  if (!audio.duration) return;
+  const rect = progressWrap.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+  progFill.style.transition = 'none';
+  progFill.style.width = (pct * 100) + '%';
+});
+
+volSlider.addEventListener('input', () => {
+  audio.volume = volSlider.value / 100;
+  volVal.textContent = volSlider.value + '%';
+});
+
+searchEl.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  const q = searchEl.value.trim();
+  if (!q) {
+    resultsEl.classList.remove('show');
+    return;
+  }
+  searchTimer = setTimeout(() => fetchTracks(q), 350);
+});
+
+document.addEventListener('click', e => {
+  if (!resultsEl.contains(e.target) && e.target !== searchEl) {
+    resultsEl.classList.remove('show');
+  }
+});
+</script>
+</body>
+</html>

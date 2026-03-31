@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>// indie.fm</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0d0d1a;
+      --bg2:       #141428;
+      --bg3:       #1e1e3a;
+      --purple:    #9b59ff;
+      --purple-dk: #6b3acc;
+      --pink:      #ff59c2;
+      --pink-dk:   #cc3a96;
+      --text:      #e8e0ff;
+      --muted:     #7a70aa;
+      --border:    #2a2a4a;
+      --glow-p:    rgba(155, 89, 255, 0.25);
+      --glow-pk:   rgba(255, 89, 194, 0.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none; z-index: 999;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(155,89,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(155,89,255,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .player {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 480px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--purple);
+      border-radius: 4px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 0 60px rgba(155,89,255,0.1), 0 0 120px rgba(255,89,194,0.05);
+    }
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .logo {
+      font-family: 'VT323', monospace;
+      font-size: 28px;
+      color: var(--purple);
+      letter-spacing: 0.05em;
+    }
+    .logo span { color: var(--pink); }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 8px var(--pink);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .search-wrap {
+      position: relative; margin-bottom: 20px;
+    }
+    .search-label {
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px; display: block;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--purple);
+      border-radius: 2px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 12px var(--glow-p);
+    }
+
+    .results {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+    .results.show { display: block; }
+    .results::-webkit-scrollbar { width: 4px; }
+    .results::-webkit-scrollbar-track { background: var(--bg3); }
+    .results::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 2px; }
+    .result-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover { background: rgba(155,89,255,0.1); }
+    .result-item.active { background: rgba(155,89,255,0.15); border-left: 2px solid var(--purple); }
+    .result-art {
+      width: 38px; height: 38px; border-radius: 2px;
+      object-fit: cover; flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .result-info { flex: 1; min-width: 0; }
+    .result-name {
+      font-size: 12px; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .result-artist {
+      font-size: 11px; color: var(--muted); margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .result-empty {
+      padding: 16px 14px;
+      font-size: 12px; color: var(--muted); text-align: center;
+    }
+
+    .now-playing {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .np-art {
+      width: 60px; height: 60px; border-radius: 2px;
+      object-fit: cover; flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .np-art.spin { animation: spin 8s linear infinite; border-radius: 50%; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .np-info { flex: 1; min-width: 0; }
+    .np-tag {
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--pink); margin-bottom: 4px;
+    }
+    .np-title {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .np-artist { font-size: 11px; color: var(--muted); }
+
+    .viz-wrap {
+      margin-bottom: 20px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 12px;
+      height: 64px;
+      display: flex; align-items: flex-end; justify-content: center;
+      gap: 3px;
+    }
+    .viz-bar {
+      width: 6px;
+      background: linear-gradient(to top, var(--purple), var(--pink));
+      border-radius: 2px 2px 0 0;
+      height: 4px;
+      transition: height 0.1s ease;
+      opacity: 0.85;
+    }
+
+    .progress-section { margin-bottom: 18px; }
+    .time-row {
+      display: flex; justify-content: space-between;
+      font-size: 10px; color: var(--muted);
+      margin-bottom: 6px; letter-spacing: 0.05em;
+    }
+    .progress-wrap {
+      width: 100%; height: 4px;
+      background: var(--bg3);
+      border-radius: 2px;
+      cursor: pointer; position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.5s linear;
+      pointer-events: none;
+    }
+
+    .controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; margin-bottom: 18px;
+    }
+    .ctrl-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-bottom: 3px solid var(--border);
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      width: 40px; height: 40px;
+      border-radius: 2px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .ctrl-btn:hover { border-color: var(--purple); color: var(--text); }
+    .ctrl-btn:active { border-bottom-width: 1px; transform: translateY(2px); }
+    .ctrl-btn.play {
+      width: 52px; height: 52px;
+      background: var(--purple);
+      border-color: var(--purple-dk);
+      border-bottom-width: 4px;
+      color: #fff;
+      font-size: 18px;
+      box-shadow: 0 0 20px var(--glow-p);
+    }
+    .ctrl-btn.play:hover { background: #b070ff; }
+    .ctrl-btn.active { border-color: var(--pink); color: var(--pink); }
+
+    .vol-row {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 11px; color: var(--muted);
+    }
+    .vol-label { letter-spacing: 0.08em; min-width: 28px; }
+    input[type=range] {
+      flex: 1; height: 4px; appearance: none;
+      background: var(--bg3); border-radius: 2px; outline: none; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px; height: 12px;
+      background: var(--purple); border-radius: 50%;
+      box-shadow: 0 0 6px var(--glow-p);
+    }
+    .vol-val { min-width: 32px; text-align: right; }
+
+    .footer {
+      margin-top: 20px; padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 10px; color: var(--muted);
+      display: flex; justify-content: space-between;
+      letter-spacing: 0.08em;
+    }
+    .footer span { color: var(--purple); }
+  </style>
+</head>
+<body>
+
+<div class="player">
+  <div class="header">
+    <div class="logo">// indie<span>.fm</span></div>
+    <div class="status-dot" id="statusDot"></div>
+  </div>
+
+  <span class="search-label">// search_itunes</span>
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="text"
+           placeholder="tame impala, arctic monkeys, radiohead..."
+           autocomplete="off">
+  </div>
+  <div class="results" id="results"></div>
+
+  <div class="now-playing">
+    <img class="np-art" id="npArt" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMjgiIGZpbGw9IiMzMzMzMzMiLz4KPHRleHQgeD0iMzAiIHk9IjM1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU3BhY2UgTW9ubyIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk1NTlmZiI+bm8gc29uZzwvdGV4dD4KPC9zdmc+" alt="album art">
+    <div class="np-info">
+      <div class="np-tag">▶ now_playing</div>
+      <div class="np-title" id="npTitle">Search for a song...</div>
+      <div class="np-artist" id="npArtist">music player</div>
+    </div>
+  </div>
+
+  <div class="viz-wrap" id="vizWrap"></div>
+
+  <div class="progress-section">
+    <div class="time-row">
+      <span id="timeCur">0:00</span>
+      <span id="timeTot">0:00</span>
+    </div>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="btnShuffle" title="shuffle">⇄</button>
+    <button class="ctrl-btn" onclick="prevTrack()">◀◀</button>
+    <button class="ctrl-btn play" id="btnPlay" onclick="togglePlay()">▶</button>
+    <button class="ctrl-btn" onclick="nextTrack()">▶▶</button>
+    <button class="ctrl-btn" id="btnLoop" title="loop">↺</button>
+  </div>
+
+  <div class="vol-row">
+    <span class="vol-label">VOL</span>
+    <input type="range" id="volSlider" min="0" max="100" value="80" step="1" oninput="setVolume(this.value)">
+    <span class="vol-val" id="volVal">80%</span>
+  </div>
+
+  <div class="footer">
+    <span>// indie.fm v1.1</span>
+    <span>powered by <span>iTunes API</span></span>
+  </div>
+</div>
+
+<audio id="audioEl" crossorigin="anonymous"></audio>
+
+<script>
+const audio = document.getElementById('audioEl');
+const searchEl = document.getElementById('searchInput');
+const resultsEl = document.getElementById('results');
+const npArt = document.getElementById('npArt');
+const npTitle = document.getElementById('npTitle');
+const npArtist = document.getElementById('npArtist');
+const btnPlay = document.getElementById('btnPlay');
+const btnLoop = document.getElementById('btnLoop');
+const btnShuf = document.getElementById('btnShuffle');
+const progFill = document.getElementById('progressFill');
+const timeCur = document.getElementById('timeCur');
+const timeTot = document.getElementById('timeTot');
+const vizWrap = document.getElementById('vizWrap');
+const progressWrap = document.getElementById('progressWrap');
+
+let tracks = [], currentIdx = 0, shuffle = false, looping = false;
+let vizBars = [], vizTimer = null;
+let searchTimer;
+
+for (let i = 0; i < 40; i++) {
+  const b = document.createElement('div');
+  b.className = 'viz-bar';
+  vizWrap.appendChild(b);
+  vizBars.push(b);
+}
+
+function animateViz(playing) {
+  clearInterval(vizTimer);
+  if (!playing) {
+    vizBars.forEach(b => b.style.height = '4px');
+    return;
+  }
+  vizTimer = setInterval(() => {
+    vizBars.forEach((b, i) => {
+      const base = 4;
+      const wave = Math.sin(Date.now() / 200 + i * 0.4) * 12;
+      const rand = Math.random() * 20;
+      const h = Math.max(base, base + wave + rand);
+      b.style.height = h + 'px';
+    });
+  }, 80);
+}
+
+async function fetchTracks(q) {
+  if (q.length < 2) return;
+  
+  resultsEl.innerHTML = '<div class="result-empty">🔍 searching...</div>';
+  resultsEl.classList.add('show');
+  
+  const proxies = [
+    'https://api.codetabs.com/v1/proxy?quest=',
+    'https://corsproxy.io/?',
+    'https://thingproxy.freeboard.io/fetch/'
+  ];
+  
+  const baseUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=15&entity=song`;
+  
+  for (const proxy of proxies) {
+    try {
+      const url = proxy + encodeURIComponent(baseUrl);
+      const res = await fetch(url);
+      
+      if (!res.ok) continue;
+      
+      let data;
+      if (proxy.includes('codetabs')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        data = JSON.parse(text);
+      }
+      
+      tracks = data.results?.filter
+      

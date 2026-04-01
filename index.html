@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Made by Kaixexn</title>
+  <title>Made By Kaixexn</title>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -16,7 +16,7 @@
       --text:      #e8e0ff;
       --muted:     #7a70aa;
       --border:    #2a2a4a;
-      --glow-p:    rgba(155, 89, 255, 0.25);
+      --glow-p:    rgba(155,89,255,0.25);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -68,17 +68,11 @@
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 24px;
     }
-    .logo {
-      font-family: 'VT323', monospace;
-      font-size: 28px;
-      color: var(--purple);
-      letter-spacing: 0.05em;
-    }
+    .logo { font-family: 'VT323', monospace; font-size: 28px; color: var(--purple); letter-spacing: 0.05em; }
     .logo span { color: var(--pink); }
     .status-dot {
       width: 8px; height: 8px; border-radius: 50%;
-      background: var(--pink);
-      box-shadow: 0 0 8px var(--pink);
+      background: var(--pink); box-shadow: 0 0 8px var(--pink);
       animation: blink 2s ease-in-out infinite;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
@@ -102,17 +96,14 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .search-input::placeholder { color: var(--muted); }
-    .search-input:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 12px var(--glow-p);
-    }
+    .search-input:focus { border-color: var(--purple); box-shadow: 0 0 12px var(--glow-p); }
 
     .results {
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: 2px;
       margin-bottom: 20px;
-      max-height: 200px;
+      max-height: 220px;
       overflow-y: auto;
       display: none;
     }
@@ -148,10 +139,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .result-dur { font-size: 10px; color: var(--muted); flex-shrink: 0; }
-    .result-empty {
-      padding: 16px 14px;
-      font-size: 12px; color: var(--muted); text-align: center;
-    }
+    .result-empty { padding: 16px 14px; font-size: 12px; color: var(--muted); text-align: center; }
 
     .now-playing {
       background: var(--bg3);
@@ -171,14 +159,10 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .np-info { flex: 1; min-width: 0; }
-    .np-tag {
-      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--pink); margin-bottom: 4px;
-    }
+    .np-tag { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); margin-bottom: 4px; }
     .np-title {
       font-size: 14px; font-weight: 700; color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      margin-bottom: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;
     }
     .np-artist { font-size: 11px; color: var(--muted); }
 
@@ -189,8 +173,7 @@
       border-radius: 2px;
       padding: 12px;
       height: 64px;
-      display: flex; align-items: flex-end; justify-content: center;
-      gap: 3px;
+      display: flex; align-items: flex-end; justify-content: center; gap: 3px;
     }
     .viz-bar {
       width: 6px;
@@ -208,17 +191,13 @@
       margin-bottom: 6px; letter-spacing: 0.05em;
     }
     .progress-wrap {
-      width: 100%; height: 4px;
-      background: var(--bg3);
-      border-radius: 2px;
-      cursor: pointer; position: relative;
+      width: 100%; height: 4px; background: var(--bg3);
+      border-radius: 2px; cursor: pointer; position: relative;
     }
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--purple), var(--pink));
-      border-radius: 2px;
-      width: 0%;
-      pointer-events: none;
+      border-radius: 2px; width: 0%; pointer-events: none;
     }
 
     .controls {
@@ -233,8 +212,7 @@
       font-family: 'Space Mono', monospace;
       font-size: 14px;
       width: 40px; height: 40px;
-      border-radius: 2px;
-      cursor: pointer;
+      border-radius: 2px; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.15s;
     }
@@ -245,25 +223,20 @@
       background: var(--purple);
       border-color: var(--purple-dk);
       border-bottom-width: 4px;
-      color: #fff;
-      font-size: 18px;
+      color: #fff; font-size: 18px;
       box-shadow: 0 0 20px var(--glow-p);
     }
     .ctrl-btn.play:hover { background: #b070ff; }
     .ctrl-btn.toggled { border-color: var(--pink); color: var(--pink); }
 
-    .vol-row {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 11px; color: var(--muted);
-    }
+    .vol-row { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted); }
     .vol-label { letter-spacing: 0.08em; min-width: 28px; }
     input[type=range] {
       flex: 1; height: 4px; appearance: none;
       background: var(--bg3); border-radius: 2px; outline: none; cursor: pointer;
     }
     input[type=range]::-webkit-slider-thumb {
-      appearance: none;
-      width: 12px; height: 12px;
+      appearance: none; width: 12px; height: 12px;
       background: var(--purple); border-radius: 50%;
       box-shadow: 0 0 6px var(--glow-p);
     }
@@ -273,8 +246,7 @@
       margin-top: 20px; padding-top: 14px;
       border-top: 1px solid var(--border);
       font-size: 10px; color: var(--muted);
-      display: flex; justify-content: space-between;
-      letter-spacing: 0.08em;
+      display: flex; justify-content: space-between; letter-spacing: 0.08em;
     }
     .footer span { color: var(--purple); }
   </style>
@@ -287,19 +259,19 @@
     <div class="status-dot"></div>
   </div>
 
-  <span class="search-label">search jamendo</span>
+  <span class="search-label">search archive</span>
   <input class="search-input" id="searchInput" type="text"
-         placeholder="bonobo, tycho, nujabes, lofi..."
+         placeholder="jazz, ambient, blues, classical..."
          autocomplete="off">
 
   <div class="results" id="results"></div>
 
   <div class="now-playing">
-    <img class="np-art" id="npArt" src="" alt="album art">
+    <img class="np-art" id="npArt" src="" alt="art">
     <div class="np-info">
-      <div class="np-tag">▶ now playing</div>
+      <div class="np-tag">▶ now_playing</div>
       <div class="np-title" id="npTitle">Search for a song...</div>
-      <div class="np-artist" id="npArtist">full tracks via jamendo</div>
+      <div class="np-artist" id="npArtist">full tracks via archive.org</div>
     </div>
   </div>
 
@@ -316,11 +288,11 @@
   </div>
 
   <div class="controls">
-    <button class="ctrl-btn" id="btnShuffle" title="shuffle">⇄</button>
+    <button class="ctrl-btn" id="btnShuffle">⇄</button>
     <button class="ctrl-btn" id="btnPrev">◀◀</button>
     <button class="ctrl-btn play" id="btnPlay">▶</button>
     <button class="ctrl-btn" id="btnNext">▶▶</button>
-    <button class="ctrl-btn" id="btnLoop" title="loop">↺</button>
+    <button class="ctrl-btn" id="btnLoop">↺</button>
   </div>
 
   <div class="vol-row">
@@ -330,17 +302,14 @@
   </div>
 
   <div class="footer">
-    <span>MusicPlayer v2.0</span>
-    <span>Made By: <span>Kaixexn</span></span>
+    <span>Musicplayer 2v.01</span>
+    <span>Made by: <span>Kaixexn</span></span>
   </div>
 </div>
 
 <audio id="audioEl" preload="metadata"></audio>
 
 <script>
-const CLIENT_ID = 'b6747d04';
-const API_BASE  = 'https://api.jamendo.com/v3.0';
-
 const audio        = document.getElementById('audioEl');
 const searchEl     = document.getElementById('searchInput');
 const resultsEl    = document.getElementById('results');
@@ -380,6 +349,7 @@ for (let i = 0; i < 40; i++) {
 }
 
 function fmt(s) {
+  s = parseFloat(s);
   if (!s || isNaN(s)) return '0:00';
   const m   = Math.floor(s / 60);
   const sec = Math.floor(s % 60);
@@ -393,12 +363,10 @@ function setPlaying(state) {
   clearInterval(vizTimer);
   if (state) {
     vizTimer = setInterval(() => {
-      vizBars.forEach(b => {
-        b.style.height = (Math.random() * 32 + 4) + 'px';
-      });
+      vizBars.forEach(b => { b.style.height = (Math.random() * 32 + 4) + 'px'; });
     }, 120);
   } else {
-    vizBars.forEach(b => b.style.height = '4px');
+    vizBars.forEach(b => { b.style.height = '4px'; });
   }
 }
 
@@ -410,15 +378,15 @@ function updateActiveResult() {
 
 function loadTrack(idx, autoplay) {
   if (!tracks.length) return;
-  const t   = tracks[idx];
-  audio.src = t.audio;
+  const t          = tracks[idx];
+  audio.src        = t.audio;
   npTitle.textContent  = t.name;
-  npArtist.textContent = t.artist_name;
-  npArt.src            = t.image || '';
+  npArtist.textContent = t.artist;
+  npArt.src            = t.image;
   progFill.style.transition = 'none';
   progFill.style.width      = '0%';
   timeCur.textContent = '0:00';
-  timeTot.textContent = fmt(t.duration);
+  timeTot.textContent = t.duration ? fmt(t.duration) : '—:——';
   updateActiveResult();
   if (autoplay) {
     audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
@@ -430,20 +398,63 @@ async function fetchTracks(q) {
     resultsEl.classList.remove('show');
     return;
   }
+
   resultsEl.innerHTML = '<div class="result-empty">🔍 searching...</div>';
   resultsEl.classList.add('show');
+
   try {
-    const url  = `${API_BASE}/tracks/?client_id=${CLIENT_ID}&format=json&limit=20&search=${encodeURIComponent(q)}&audioformat=mp32&imagesize=100&include=musicinfo`;
-    const res  = await fetch(url);
+    const searchUrl = 'https://archive.org/advancedsearch.php?q='
+      + encodeURIComponent(q)
+      + '+AND+mediatype:audio+AND+format:MP3'
+      + '&fl=identifier,title,creator'
+      + '&sort=downloads+desc'
+      + '&rows=12&output=json';
+
+    const res  = await fetch(searchUrl);
     const data = await res.json();
-    tracks     = (data.results || []).filter(t => t.audio);
-    if (!tracks.length) {
+    const docs = data.response?.docs || [];
+
+    if (!docs.length) {
       resultsEl.innerHTML = '<div class="result-empty">no results found</div>';
       return;
     }
+
+    resultsEl.innerHTML = '<div class="result-empty">⏳ loading tracks...</div>';
+
+    const settled = await Promise.all(docs.map(doc => resolveTrack(doc)));
+    tracks = settled.filter(Boolean);
+
+    if (!tracks.length) {
+      resultsEl.innerHTML = '<div class="result-empty">no playable tracks found</div>';
+      return;
+    }
+
     renderResults();
+  } catch (err) {
+    resultsEl.innerHTML = '<div class="result-empty">search failed — ' + err.message + '</div>';
+  }
+}
+
+async function resolveTrack(doc) {
+  try {
+    const res  = await fetch('https://archive.org/metadata/' + doc.identifier + '/files');
+    const data = await res.json();
+    const files = data.result || [];
+
+    const mp3 = files.find(f => f.name?.toLowerCase().endsWith('.mp3') && f.source === 'original')
+             || files.find(f => f.name?.toLowerCase().endsWith('.mp3'));
+
+    if (!mp3) return null;
+
+    return {
+      name:     doc.title || mp3.title || doc.identifier,
+      artist:   Array.isArray(doc.creator) ? doc.creator[0] : (doc.creator || 'Unknown'),
+      audio:    'https://archive.org/download/' + doc.identifier + '/' + encodeURIComponent(mp3.name),
+      image:    'https://archive.org/services/img/' + doc.identifier,
+      duration: mp3.length || 0
+    };
   } catch {
-    resultsEl.innerHTML = '<div class="result-empty">search failed — check connection</div>';
+    return null;
   }
 }
 
@@ -453,12 +464,12 @@ function renderResults() {
     const el = document.createElement('div');
     el.className = 'result-item' + (i === currentIdx && isPlaying ? ' active' : '');
     el.innerHTML = `
-      <img class="result-art" src="${t.image || ''}" alt="">
+      <img class="result-art" src="${t.image}" alt="" onerror="this.style.visibility='hidden'">
       <div class="result-info">
         <div class="result-name">${t.name}</div>
-        <div class="result-meta">${t.artist_name} — ${t.album_name || 'single'}</div>
+        <div class="result-meta">${t.artist}</div>
       </div>
-      <span class="result-dur">${fmt(t.duration)}</span>
+      <span class="result-dur">${t.duration ? fmt(t.duration) : '—:——'}</span>
     `;
     el.addEventListener('click', () => {
       currentIdx = i;
@@ -472,10 +483,7 @@ function renderResults() {
 
 btnPlay.addEventListener('click', () => {
   if (!tracks.length) return;
-  if (!audio.src) {
-    loadTrack(currentIdx, true);
-    return;
-  }
+  if (!audio.src) { loadTrack(currentIdx, true); return; }
   if (isPlaying) {
     audio.pause();
   } else {
@@ -493,10 +501,7 @@ btnNext.addEventListener('click', () => {
 
 btnPrev.addEventListener('click', () => {
   if (!tracks.length) return;
-  if (audio.currentTime > 3) {
-    audio.currentTime = 0;
-    return;
-  }
+  if (audio.currentTime > 3) { audio.currentTime = 0; return; }
   currentIdx = (currentIdx - 1 + tracks.length) % tracks.length;
   loadTrack(currentIdx, true);
 });
@@ -561,7 +566,7 @@ searchEl.addEventListener('input', () => {
   clearTimeout(searchTimer);
   const q = searchEl.value.trim();
   if (!q) { resultsEl.classList.remove('show'); return; }
-  searchTimer = setTimeout(() => fetchTracks(q), 350);
+  searchTimer = setTimeout(() => fetchTracks(q), 400);
 });
 
 document.addEventListener('click', e => {

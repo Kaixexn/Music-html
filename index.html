@@ -322,11 +322,49 @@
       25% { transform: translateY(-2px) rotate(5deg); }
       75% { transform: translateY(-2px) rotate(-5deg); }
     }
+
+    #scream-cat {
+      position: absolute;
+      left: 50%;
+      top: -78px;
+      transform: translateX(-50%);
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      z-index: 20;
+      animation: catFloat 2.8s ease-in-out infinite;
+      cursor: pointer;
+      filter: drop-shadow(0 0 8px rgba(255,89,194,0.4));
+    }
+
+    #scream-cat:hover {
+      animation: catScream 0.15s steps(1) infinite;
+      filter: drop-shadow(0 0 16px rgba(255,89,194,0.9)) drop-shadow(0 0 32px rgba(155,89,255,0.7));
+    }
+
+    .playing #scream-cat {
+      animation: catBop 0.6s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(255,89,194,0.7)) drop-shadow(0 0 24px rgba(155,89,255,0.5));
+    }
+
+    @keyframes catFloat {
+      0%, 100% { transform: translateX(-50%) translateY(0px) rotate(-1deg); }
+      50%       { transform: translateX(-50%) translateY(-6px) rotate(1deg); }
+    }
+    @keyframes catBop {
+      0%, 100% { transform: translateX(-50%) translateY(0px) scaleY(1); }
+      40%       { transform: translateX(-50%) translateY(-8px) scaleY(1.05); }
+      60%       { transform: translateX(-50%) translateY(0px) scaleY(0.95); }
+    }
+    @keyframes catScream {
+      0%   { transform: translateX(-50%) translateY(-2px) rotate(-3deg); }
+      50%  { transform: translateX(-50%) translateY(2px)  rotate(3deg); }
+    }
   </style>
 </head>
 <body>
 
 <div class="player">
+  <canvas id="scream-cat" width="80" height="70" title="Click me!"></canvas>
   <canvas id="mascot" width="40" height="68"></canvas>
   <div class="terraria-char" id="terrariaChar">
     <svg viewBox="0 0 32 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -708,11 +746,84 @@ function drawMascot(ts) {
   requestAnimationFrame(drawMascot);
 }
 
-// Terraria character sync
 audio.addEventListener('play',  () => document.body.classList.add('playing'));
 audio.addEventListener('pause', () => document.body.classList.remove('playing'));
 
 requestAnimationFrame(drawMascot);
+
+const screamCanvas = document.getElementById('scream-cat');
+const sctx = screamCanvas.getContext('2d');
+sctx.imageSmoothingEnabled = false;
+
+const SC = ['', '#1a0a00', '#c8956a', '#f0dfc0', '#e8829a', '#7a4a2a', '#8b1a1a', '#c0302a'];
+
+const SCREAM = [
+  [0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0],
+  [0,0,1,4,4,1,0,1,4,4,1,0,0,0,0,0],
+  [0,1,4,4,2,2,1,2,2,4,4,1,0,0,0,0],
+  [1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
+  [1,2,5,5,2,2,2,2,2,5,5,2,1,0,0,0],
+  [1,2,2,2,4,2,2,4,2,2,2,2,1,0,0,0],
+  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
+  [1,3,3,1,1,1,1,1,1,1,3,3,1,0,0,0],
+  [1,3,1,6,6,6,6,6,6,6,1,3,1,0,0,0],
+  [1,3,1,6,7,7,7,7,7,6,1,3,1,0,0,0],
+  [1,3,1,6,7,7,7,7,7,6,1,3,1,0,0,0],
+  [1,3,3,1,1,1,1,1,1,1,3,3,1,0,0,0],
+  [0,1,3,3,3,3,3,3,3,3,3,1,0,0,0,0],
+  [0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+];
+
+const CALM = [
+  [0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0],
+  [0,0,1,4,4,1,0,1,4,4,1,0,0,0,0,0],
+  [0,1,4,4,2,2,1,2,2,4,4,1,0,0,0,0],
+  [1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
+  [1,2,5,5,2,2,2,2,2,5,5,2,1,0,0,0],
+  [1,2,2,2,4,2,2,4,2,2,2,2,1,0,0,0],
+  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
+  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
+  [1,3,3,1,1,3,3,3,1,1,3,3,1,0,0,0],
+  [1,3,3,1,1,3,3,3,1,1,3,3,1,0,0,0],
+  [1,3,3,3,3,3,1,3,3,3,3,3,1,0,0,0],
+  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
+  [0,1,3,3,3,3,3,3,3,3,3,1,0,0,0,0],
+  [0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+];
+
+const SP = 5; 
+let screamState = false;
+let screamHeld  = false;
+
+function drawScreamCat(frame) {
+  sctx.clearRect(0, 0, screamCanvas.width, screamCanvas.height);
+  frame.forEach((row, y) => {
+    row.forEach((px, x) => {
+      if (!px) return;
+      sctx.fillStyle = SC[px];
+      sctx.fillRect(x * SP, y * SP, SP, SP);
+    });
+  });
+}
+
+screamCanvas.addEventListener('click', () => {
+  screamState = !screamState;
+  drawScreamCat(screamState ? SCREAM : CALM);
+});
+
+screamCanvas.addEventListener('mouseenter', () => {
+  screamHeld = true;
+  drawScreamCat(SCREAM);
+});
+screamCanvas.addEventListener('mouseleave', () => {
+  screamHeld = false;
+  drawScreamCat(screamState ? SCREAM : CALM);
+});
+
+audio.addEventListener('play',  () => drawScreamCat(SCREAM));
+audio.addEventListener('pause', () => { if (!screamHeld) drawScreamCat(CALM); });
+
+drawScreamCat(CALM);
 
 </script>
 </body>

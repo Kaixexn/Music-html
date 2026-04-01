@@ -17,6 +17,7 @@
       --muted:     #7a70aa;
       --border:    #2a2a4a;
       --glow-p:    rgba(155,89,255,0.25);
+      --glow-pk:   rgba(255,89,194,0.5);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -289,12 +290,62 @@
       z-index: 10;
       filter: drop-shadow(0 0 6px rgba(155,89,255,0.5));
     }
+
+    .terraria-char {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 36px;
+      height: 48px;
+      z-index: 10;
+      filter: drop-shadow(0 0 8px var(--glow-p));
+      animation: terrariaFloat 3s ease-in-out infinite;
+    }
+
+    .terraria-char:hover {
+      animation-play-state: paused;
+      transform: scale(1.2);
+    }
+
+    @keyframes terrariaFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(2deg); }
+    }
+
+    .playing .terraria-char {
+      filter: drop-shadow(0 0 12px var(--glow-pk)) drop-shadow(0 0 20px var(--purple));
+      animation: terrariaDance 1.2s ease-in-out infinite;
+    }
+
+    @keyframes terrariaDance {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-2px) rotate(5deg); }
+      75% { transform: translateY(-2px) rotate(-5deg); }
+    }
   </style>
 </head>
 <body>
 
 <div class="player">
   <canvas id="mascot" width="40" height="68"></canvas>
+  <div class="terraria-char" id="terrariaChar">
+    <svg viewBox="0 0 32 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="12" width="16" height="20" rx="2" fill="#4a5568"/>
+      <rect x="10" y="14" width="12" height="6" rx="1" fill="#2d3748"/>
+      <rect x="12" y="22" width="8" height="8" rx="1" fill="#68d391"/>
+      <rect x="10" y="32" width="4" height="8" rx="1" fill="#f7fafc"/>
+      <rect x="18" y="32" width="4" height="8" rx="1" fill="#f7fafc"/>
+      <circle cx="12" cy="10" r="4" fill="#fbb6ce"/>
+      <circle cx="20" cy="10" r="4" fill="#fbb6ce"/>
+      <circle cx="16" cy="9" r="2" fill="#2d3748"/>
+      <path d="M14 6 L16 4 L18 6" stroke="#e53e3e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="6" y="36" width="6" height="10" rx="2" fill="#805ad5"/>
+      <rect x="20" y="36" width="6" height="10" rx="2" fill="#805ad5"/>
+      <rect x="4" y="4" width="4" height="6" rx="1" fill="#63b3ed"/>
+      <rect x="24" y="4" width="4" height="6" rx="1" fill="#63b3ed"/>
+      <path d="M8 32 Q12 36 16 32 Q20 36 24 32" stroke="#f6ad55" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>
+  </div>
   <div class="header">
     <div class="logo">MUSIC<span>PLAYER</span></div>
     <div class="status-dot"></div>
@@ -656,6 +707,10 @@ function drawMascot(ts) {
 
   requestAnimationFrame(drawMascot);
 }
+
+// Terraria character sync
+audio.addEventListener('play',  () => document.body.classList.add('playing'));
+audio.addEventListener('pause', () => document.body.classList.remove('playing'));
 
 requestAnimationFrame(drawMascot);
 

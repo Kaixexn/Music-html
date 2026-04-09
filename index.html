@@ -69,55 +69,31 @@
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 24px;
     }
-    .logo {
-      font-family: 'VT323', monospace;
-      font-size: 28px;
-      color: var(--purple);
-      letter-spacing: 0.05em;
-    }
+    .logo { font-family: 'VT323', monospace; font-size: 28px; color: var(--purple); letter-spacing: 0.05em; }
     .logo span { color: var(--pink); }
-
     .status-dot {
       width: 8px; height: 8px; border-radius: 50%;
-      background: var(--pink);
-      box-shadow: 0 0 8px var(--pink);
+      background: var(--pink); box-shadow: 0 0 8px var(--pink);
       animation: blink 2s ease-in-out infinite;
     }
     @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .search-label {
-      display: block;
-      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 6px;
-    }
+    .search-label { display: block; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
     .search-input {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--purple);
-      border-radius: 2px;
-      color: var(--text);
-      font-family: 'Space Mono', monospace;
-      font-size: 13px;
-      padding: 10px 14px;
-      outline: none;
-      margin-bottom: 20px;
+      width: 100%; background: var(--bg3);
+      border: 1px solid var(--border); border-left: 3px solid var(--purple);
+      border-radius: 2px; color: var(--text);
+      font-family: 'Space Mono', monospace; font-size: 13px;
+      padding: 10px 14px; outline: none; margin-bottom: 20px;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .search-input::placeholder { color: var(--muted); }
-    .search-input:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 12px var(--glow-p);
-    }
+    .search-input:focus { border-color: var(--purple); box-shadow: 0 0 12px var(--glow-p); }
 
     .results {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      margin-bottom: 20px;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 2px; margin-bottom: 20px;
+      max-height: 200px; overflow-y: auto; display: none;
     }
     .results.show { display: block; }
     .results::-webkit-scrollbar { width: 4px; }
@@ -126,247 +102,139 @@
 
     .result-item {
       display: flex; align-items: center; gap: 12px;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.15s;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background 0.15s;
     }
     .result-item:last-child { border-bottom: none; }
     .result-item:hover { background: rgba(155,89,255,0.1); }
     .result-item.active { background: rgba(155,89,255,0.15); border-left: 2px solid var(--purple); }
-
-    .result-art {
-      width: 38px; height: 38px; border-radius: 2px;
-      object-fit: cover; flex-shrink: 0;
-      border: 1px solid var(--border);
-    }
+    .result-art { width: 38px; height: 38px; border-radius: 2px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); }
     .result-info { flex: 1; min-width: 0; }
-    .result-name {
-      font-size: 12px; color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .result-artist {
-      font-size: 11px; color: var(--muted); margin-top: 2px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .result-empty {
-      padding: 16px 14px;
-      font-size: 12px; color: var(--muted); text-align: center;
-    }
+    .result-name { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .result-artist { font-size: 11px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .result-empty { padding: 16px 14px; font-size: 12px; color: var(--muted); text-align: center; }
 
     .now-playing {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 16px;
-      margin-bottom: 20px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 2px; padding: 16px; margin-bottom: 20px;
       display: flex; align-items: center; gap: 14px;
     }
     .np-art {
       width: 60px; height: 60px; border-radius: 2px;
       object-fit: cover; flex-shrink: 0;
-      border: 1px solid var(--border);
-      background: var(--bg3);
+      border: 1px solid var(--border); background: var(--bg3);
     }
-    .np-art[src=""], .np-art:not([src]) {
-      visibility: hidden;
-    }
+    .np-art[src=""], .np-art:not([src]) { visibility: hidden; }
     .np-art.spin { animation: spin 8s linear infinite; border-radius: 50%; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .np-info { flex: 1; min-width: 0; }
-    .np-tag {
-      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--pink); margin-bottom: 4px;
-    }
-    .np-title {
-      font-size: 14px; font-weight: 700; color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      margin-bottom: 2px;
-    }
+    .np-tag { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); margin-bottom: 4px; }
+    .np-title { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
     .np-artist { font-size: 11px; color: var(--muted); }
 
     .viz-wrap {
-      margin-bottom: 20px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 12px;
-      height: 64px;
+      margin-bottom: 20px; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: 2px;
+      padding: 12px; height: 64px;
       display: flex; align-items: flex-end; justify-content: center; gap: 3px;
     }
     .viz-bar {
-      width: 6px;
-      background: linear-gradient(to top, var(--purple), var(--pink));
-      border-radius: 2px 2px 0 0;
-      height: 4px;
-      transition: height 0.08s ease;
-      opacity: 0.85;
+      width: 6px; background: linear-gradient(to top, var(--purple), var(--pink));
+      border-radius: 2px 2px 0 0; height: 4px;
+      transition: height 0.08s ease; opacity: 0.85;
     }
 
     .progress-section { margin-bottom: 18px; }
-    .time-row {
-      display: flex; justify-content: space-between;
-      font-size: 10px; color: var(--muted);
-      margin-bottom: 6px; letter-spacing: 0.05em;
-    }
-    .progress-wrap {
-      width: 100%; height: 4px;
-      background: var(--bg3);
-      border-radius: 2px;
-      cursor: pointer; position: relative;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--purple), var(--pink));
-      border-radius: 2px;
-      width: 0%;
-      pointer-events: none;
-    }
+    .time-row { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; }
+    .progress-wrap { width: 100%; height: 4px; background: var(--bg3); border-radius: 2px; cursor: pointer; position: relative; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--pink)); border-radius: 2px; width: 0%; pointer-events: none; }
 
-    .controls {
-      display: flex; align-items: center; justify-content: center;
-      gap: 12px; margin-bottom: 18px;
-    }
+    .controls { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 18px; }
     .ctrl-btn {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-bottom: 3px solid var(--border);
-      color: var(--muted);
-      font-family: 'Space Mono', monospace;
-      font-size: 14px;
-      width: 40px; height: 40px;
-      border-radius: 2px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
+      background: var(--bg3); border: 1px solid var(--border); border-bottom: 3px solid var(--border);
+      color: var(--muted); font-family: 'Space Mono', monospace; font-size: 14px;
+      width: 40px; height: 40px; border-radius: 2px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
     }
     .ctrl-btn:hover { border-color: var(--purple); color: var(--text); }
     .ctrl-btn:active { border-bottom-width: 1px; transform: translateY(2px); }
     .ctrl-btn.play {
-      width: 52px; height: 52px;
-      background: var(--purple);
-      border-color: var(--purple-dk);
-      border-bottom-width: 4px;
-      color: #fff;
-      font-size: 18px;
-      box-shadow: 0 0 20px var(--glow-p);
+      width: 52px; height: 52px; background: var(--purple);
+      border-color: var(--purple-dk); border-bottom-width: 4px;
+      color: #fff; font-size: 18px; box-shadow: 0 0 20px var(--glow-p);
     }
     .ctrl-btn.play:hover { background: #b070ff; }
     .ctrl-btn.toggled { border-color: var(--pink); color: var(--pink); }
 
-    .vol-row {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 11px; color: var(--muted);
-    }
+    .vol-row { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted); }
     .vol-label { letter-spacing: 0.08em; min-width: 28px; }
-    input[type=range] {
-      flex: 1; height: 4px; appearance: none;
-      background: var(--bg3); border-radius: 2px; outline: none; cursor: pointer;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      appearance: none;
-      width: 12px; height: 12px;
-      background: var(--purple); border-radius: 50%;
-      box-shadow: 0 0 6px var(--glow-p);
-    }
+    input[type=range] { flex: 1; height: 4px; appearance: none; background: var(--bg3); border-radius: 2px; outline: none; cursor: pointer; }
+    input[type=range]::-webkit-slider-thumb { appearance: none; width: 12px; height: 12px; background: var(--purple); border-radius: 50%; box-shadow: 0 0 6px var(--glow-p); }
     .vol-val { min-width: 32px; text-align: right; }
 
     .footer {
-      margin-top: 20px; padding-top: 14px;
-      border-top: 1px solid var(--border);
+      margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border);
       font-size: 10px; color: var(--muted);
-      display: flex; justify-content: space-between;
-      letter-spacing: 0.08em;
+      display: flex; justify-content: space-between; letter-spacing: 0.08em;
     }
     .footer span { color: var(--purple); }
 
-    #mascot {
-      position: absolute;
-      right: 20px;
-      top: -62px;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      z-index: 10;
-      filter: drop-shadow(0 0 6px rgba(155,89,255,0.5));
-    }
+    #mascot { position: absolute; right: 20px; top: -62px; image-rendering: pixelated; image-rendering: crisp-edges; z-index: 10; filter: drop-shadow(0 0 6px rgba(155,89,255,0.5)); }
 
-    .terraria-char {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      width: 36px;
-      height: 48px;
-      z-index: 10;
-      filter: drop-shadow(0 0 8px var(--glow-p));
-      animation: terrariaFloat 3s ease-in-out infinite;
-    }
+    .terraria-char { position: absolute; top: 8px; left: 8px; width: 36px; height: 48px; z-index: 10; filter: drop-shadow(0 0 8px var(--glow-p)); animation: terrariaFloat 3s ease-in-out infinite; }
+    .terraria-char:hover { animation-play-state: paused; transform: scale(1.2); }
+    @keyframes terrariaFloat { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-4px) rotate(2deg); } }
+    .playing .terraria-char { filter: drop-shadow(0 0 12px var(--glow-pk)) drop-shadow(0 0 20px var(--purple)); animation: terrariaDance 1.2s ease-in-out infinite; }
+    @keyframes terrariaDance { 0%, 100% { transform: translateY(0px) rotate(0deg); } 25% { transform: translateY(-2px) rotate(5deg); } 75% { transform: translateY(-2px) rotate(-5deg); } }
 
-    .terraria-char:hover {
-      animation-play-state: paused;
-      transform: scale(1.2);
-    }
+    #scream-cat { position: absolute; left: 50%; top: -78px; transform: translateX(-50%); image-rendering: pixelated; image-rendering: crisp-edges; z-index: 20; animation: catFloat 2.8s ease-in-out infinite; cursor: pointer; filter: drop-shadow(0 0 8px rgba(255,89,194,0.4)); }
+    #scream-cat:hover { animation: catScream 0.15s steps(1) infinite; filter: drop-shadow(0 0 16px rgba(255,89,194,0.9)) drop-shadow(0 0 32px rgba(155,89,255,0.7)); }
+    .playing #scream-cat { animation: catBop 0.6s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(255,89,194,0.7)) drop-shadow(0 0 24px rgba(155,89,255,0.5)); }
+    @keyframes catFloat { 0%, 100% { transform: translateX(-50%) translateY(0px) rotate(-1deg); } 50% { transform: translateX(-50%) translateY(-6px) rotate(1deg); } }
+    @keyframes catBop { 0%, 100% { transform: translateX(-50%) translateY(0px) scaleY(1); } 40% { transform: translateX(-50%) translateY(-8px) scaleY(1.05); } 60% { transform: translateX(-50%) translateY(0px) scaleY(0.95); } }
+    @keyframes catScream { 0% { transform: translateX(-50%) translateY(-2px) rotate(-3deg); } 50% { transform: translateX(-50%) translateY(2px) rotate(3deg); } }
 
-    @keyframes terrariaFloat {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-4px) rotate(2deg); }
+    .lyrics-panel {
+      margin-top: 16px; background: var(--bg3);
+      border: 1px solid var(--border); border-left: 3px solid var(--pink);
+      border-radius: 2px; overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+      max-height: 0; opacity: 0;
     }
+    .lyrics-panel.open { max-height: 420px; opacity: 1; }
+    .lyrics-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border); background: rgba(255,89,194,0.05); }
+    .lyrics-title-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); }
+    .lyrics-song-name { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .lyrics-status { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; }
+    .lyrics-body { padding: 14px; max-height: 340px; overflow-y: auto; font-size: 12px; line-height: 1.9; color: var(--text); white-space: pre-wrap; }
+    .lyrics-body::-webkit-scrollbar { width: 4px; }
+    .lyrics-body::-webkit-scrollbar-track { background: var(--bg3); }
+    .lyrics-body::-webkit-scrollbar-thumb { background: var(--pink); border-radius: 2px; }
+    .lyrics-placeholder { color: var(--muted); font-size: 12px; text-align: center; padding: 20px 0; }
+    .lyrics-cursor { display: inline-block; width: 2px; height: 13px; background: var(--pink); margin-left: 2px; vertical-align: middle; animation: blink 0.7s step-end infinite; }
 
-    .playing .terraria-char {
-      filter: drop-shadow(0 0 12px var(--glow-pk)) drop-shadow(0 0 20px var(--purple));
-      animation: terrariaDance 1.2s ease-in-out infinite;
+    .btn-lyrics {
+      background: var(--bg3); border: 1px solid var(--border); border-bottom: 3px solid var(--border);
+      color: var(--muted); font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.08em; padding: 6px 12px; border-radius: 2px;
+      cursor: pointer; transition: all 0.15s; margin-top: 12px; width: 100%;
     }
-
-    @keyframes terrariaDance {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      25% { transform: translateY(-2px) rotate(5deg); }
-      75% { transform: translateY(-2px) rotate(-5deg); }
-    }
-
-    #scream-cat {
-      position: absolute;
-      left: 50%;
-      top: -78px;
-      transform: translateX(-50%);
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      z-index: 20;
-      animation: catFloat 2.8s ease-in-out infinite;
-      cursor: pointer;
-      filter: drop-shadow(0 0 8px rgba(255,89,194,0.4));
-    }
-
-    #scream-cat:hover {
-      animation: catScream 0.15s steps(1) infinite;
-      filter: drop-shadow(0 0 16px rgba(255,89,194,0.9)) drop-shadow(0 0 32px rgba(155,89,255,0.7));
-    }
-
-    .playing #scream-cat {
-      animation: catBop 0.6s ease-in-out infinite;
-      filter: drop-shadow(0 0 12px rgba(255,89,194,0.7)) drop-shadow(0 0 24px rgba(155,89,255,0.5));
-    }
-
-    @keyframes catFloat {
-      0%, 100% { transform: translateX(-50%) translateY(0px) rotate(-1deg); }
-      50%       { transform: translateX(-50%) translateY(-6px) rotate(1deg); }
-    }
-    @keyframes catBop {
-      0%, 100% { transform: translateX(-50%) translateY(0px) scaleY(1); }
-      40%       { transform: translateX(-50%) translateY(-8px) scaleY(1.05); }
-      60%       { transform: translateX(-50%) translateY(0px) scaleY(0.95); }
-    }
-    @keyframes catScream {
-      0%   { transform: translateX(-50%) translateY(-2px) rotate(-3deg); }
-      50%  { transform: translateX(-50%) translateY(2px)  rotate(3deg); }
-    }
+    .btn-lyrics:hover { border-color: var(--pink); color: var(--pink); }
+    .btn-lyrics:active { border-bottom-width: 1px; transform: translateY(2px); }
+    .btn-lyrics.active { border-color: var(--pink); color: var(--pink); background: rgba(255,89,194,0.08); }
   </style>
 </head>
 <body>
 
+<div style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;">
+  <div id="ytPlayer"></div>
+</div>
+
 <div class="player">
   <canvas id="scream-cat" width="80" height="70" title="Click me!"></canvas>
   <canvas id="mascot" width="40" height="68"></canvas>
-  <div class="terraria-char" id="terrariaChar">
+
+  <div class="terraria-char">
     <svg viewBox="0 0 32 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="8" y="12" width="16" height="20" rx="2" fill="#4a5568"/>
       <rect x="10" y="14" width="12" height="6" rx="1" fill="#2d3748"/>
@@ -384,6 +252,7 @@
       <path d="M8 32 Q12 36 16 32 Q20 36 24 32" stroke="#f6ad55" stroke-width="2" stroke-linecap="round" fill="none"/>
     </svg>
   </div>
+
   <div class="header">
     <div class="logo">MUSIC<span>PLAYER</span></div>
     <div class="status-dot"></div>
@@ -431,16 +300,28 @@
     <span class="vol-val" id="volVal">80%</span>
   </div>
 
+  <button class="btn-lyrics" id="btnLyrics">♪ GENERATE LYRICS</button>
+
+  <div class="lyrics-panel" id="lyricsPanel">
+    <div class="lyrics-header">
+      <div>
+        <div class="lyrics-title-label">♪ AI LYRICS</div>
+        <div class="lyrics-song-name" id="lyricsSongName">—</div>
+      </div>
+      <div class="lyrics-status" id="lyricsStatus">READY</div>
+    </div>
+    <div class="lyrics-body" id="lyricsBody">
+      <div class="lyrics-placeholder">Search and play a song, then click<br>GENERATE LYRICS to create AI lyrics ↑</div>
+    </div>
+  </div>
+
   <div class="footer">
     <span>MusicPlayer v2.0</span>
     <span>Made By: <span>Kaixexn</span></span>
   </div>
 </div>
 
-<audio id="audioEl" preload="metadata"></audio>
-
 <script>
-const audio        = document.getElementById('audioEl');
 const searchEl     = document.getElementById('searchInput');
 const resultsEl    = document.getElementById('results');
 const npArt        = document.getElementById('npArt');
@@ -459,18 +340,18 @@ const progressWrap = document.getElementById('progressWrap');
 const volSlider    = document.getElementById('volSlider');
 const volVal       = document.getElementById('volVal');
 
-let tracks     = [];
-let currentIdx = 0;
-let shuffle    = false;
-let looping    = false;
-let isPlaying  = false;
-let vizTimer   = null;
-let searchTimer = null;
-let isSeeking  = false;
-let vizBars    = [];
+let tracks        = [];
+let currentIdx    = 0;
+let shuffle       = false;
+let looping       = false;
+let isPlaying     = false;
+let isSeeking     = false;
+let vizTimer      = null;
+let searchTimer   = null;
+let progressTimer = null;
+let loadSeq       = 0;
 
-audio.volume = 0.8;
-
+const vizBars = [];
 for (let i = 0; i < 40; i++) {
   const b = document.createElement('div');
   b.className = 'viz-bar';
@@ -484,10 +365,13 @@ function fmt(s) {
 }
 
 function setPlaying(state) {
-  isPlaying = state;
+  isPlaying     = state;
   mascotPlaying = state;
   btnPlay.textContent = state ? '⏸' : '▶';
   npArt.classList.toggle('spin', state);
+  document.body.classList.toggle('playing', state);
+  if (!state && !screamHeld) drawScreamCat(screamState ? SCREAM : CALM);
+  if (state) drawScreamCat(SCREAM);
   clearInterval(vizTimer);
   if (state) {
     vizTimer = setInterval(() => {
@@ -501,66 +385,132 @@ function setPlaying(state) {
   }
 }
 
+function startProgress() {
+  clearInterval(progressTimer);
+  progressTimer = setInterval(() => {
+    if (!ytPlayer || !ytReady || isSeeking) return;
+    try {
+      const cur = ytPlayer.getCurrentTime() || 0;
+      const dur = ytPlayer.getDuration() || 0;
+      if (!dur) return;
+      progFill.style.width = (cur / dur * 100) + '%';
+      timeCur.textContent  = fmt(cur);
+      timeTot.textContent  = fmt(dur);
+    } catch {}
+  }, 500);
+}
+
+function stopProgress() {
+  clearInterval(progressTimer);
+}
+
+let ytPlayer = null;
+let ytReady  = false;
+let ytQueue  = [];
+
+window.onYouTubeIframeAPIReady = function () {
+  ytPlayer = new YT.Player('ytPlayer', {
+    width: '1', height: '1',
+    playerVars: {
+      autoplay: 0, controls: 0, disablekb: 1,
+      fs: 0, iv_load_policy: 3, rel: 0, modestbranding: 1
+    },
+    events: {
+      onReady() {
+        ytReady = true;
+        ytPlayer.setVolume(parseInt(volSlider.value));
+        ytQueue.forEach(fn => fn());
+        ytQueue = [];
+      },
+      onStateChange(e) {
+        if (e.data === YT.PlayerState.PLAYING) {
+          setPlaying(true);
+          startProgress();
+        } else if (e.data === YT.PlayerState.PAUSED) {
+          setPlaying(false);
+          stopProgress();
+        } else if (e.data === YT.PlayerState.ENDED) {
+          setPlaying(false);
+          stopProgress();
+          if (looping) {
+            ytPlayer.seekTo(0, true);
+            ytPlayer.playVideo();
+          } else {
+            const next = shuffle
+              ? Math.floor(Math.random() * tracks.length)
+              : (currentIdx + 1) % tracks.length;
+            loadTrack(next, true);
+          }
+        }
+      }
+    }
+  });
+};
+
+(function () {
+  const s = document.createElement('script');
+  s.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(s);
+})();
+
+async function findVideoId(trackName, artistName) {
+  const q = encodeURIComponent(trackName + ' ' + artistName + ' audio');
+  const endpoints = [
+    'https://pipedapi.kavin.rocks/search?q=' + q + '&filter=videos',
+    'https://api.piped.projectsegfau.lt/search?q=' + q + '&filter=videos'
+  ];
+  for (const url of endpoints) {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 6000);
+      const res = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(timer);
+      if (!res.ok) continue;
+      const data = await res.json();
+      const item = (data.items || []).find(i => i.type === 'stream');
+      if (item && item.url) {
+        const parts = item.url.split('v=');
+        if (parts[1]) return parts[1].split('&')[0];
+      }
+    } catch {}
+  }
+  return null;
+}
+
 function updateActiveResult() {
   document.querySelectorAll('.result-item').forEach((el, i) => {
     el.classList.toggle('active', i === currentIdx);
   });
 }
 
-function loadTrack(idx, autoplay) {
+async function loadTrack(idx, autoplay) {
   if (!tracks.length) return;
   currentIdx = idx;
+  const seq = ++loadSeq;
   const t = tracks[idx];
-  audio.src            = t.previewUrl;
+
   npTitle.textContent  = t.trackName;
-  npArtist.textContent = t.artistName;
+  npArtist.textContent = '🔍 finding on youtube...';
   npArt.src            = t.artworkUrl100 || '';
   npArt.onerror        = () => { npArt.src = ''; };
-  progFill.style.transition = 'none';
-  progFill.style.width      = '0%';
-  timeCur.textContent = '0:00';
-  timeTot.textContent = '0:30';
+  progFill.style.width = '0%';
+  timeCur.textContent  = '0:00';
+  timeTot.textContent  = '0:00';
   updateActiveResult();
-  if (autoplay) {
-    audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-  }
-}
+  resetLyrics();
 
-function fetchTracks(q) {
-  if (q.length < 2) {
-    resultsEl.classList.remove('show');
+  const videoId = await findVideoId(t.trackName, t.artistName);
+  if (seq !== loadSeq) return;
+
+  if (!videoId) {
+    npArtist.textContent = '⚠ not found on youtube — try another song';
     return;
   }
 
-  resultsEl.innerHTML = '<div class="result-empty">🔍 searching...</div>';
-  resultsEl.classList.add('show');
+  npArtist.textContent = t.artistName;
 
-  const cbName = 'itcb_' + Date.now();
-  const script  = document.createElement('script');
-
-  window[cbName] = function(data) {
-    tracks = (data.results || []).filter(t => t.previewUrl);
-    delete window[cbName];
-    script.remove();
-    if (!tracks.length) {
-      resultsEl.innerHTML = '<div class="result-empty">no results found</div>';
-      return;
-    }
-    renderResults();
-  };
-
-  script.onerror = function() {
-    resultsEl.innerHTML = '<div class="result-empty">search failed — check connection</div>';
-    delete window[cbName];
-    script.remove();
-  };
-
-  script.src = 'https://itunes.apple.com/search?term='
-    + encodeURIComponent(q)
-    + '&media=music&entity=song&limit=15&callback='
-    + cbName;
-
-  document.head.appendChild(script);
+  const go = () => autoplay ? ytPlayer.loadVideoById(videoId) : ytPlayer.cueVideoById(videoId);
+  ytReady ? go() : ytQueue.push(go);
 }
 
 function renderResults() {
@@ -568,13 +518,12 @@ function renderResults() {
   tracks.forEach((t, i) => {
     const el = document.createElement('div');
     el.className = 'result-item' + (i === currentIdx && isPlaying ? ' active' : '');
-    el.innerHTML = `
-      <img class="result-art" src="${t.artworkUrl60}" alt="">
-      <div class="result-info">
-        <div class="result-name">${t.trackName}</div>
-        <div class="result-artist">${t.artistName} — ${t.collectionName || ''}</div>
-      </div>
-    `;
+    el.innerHTML =
+      '<img class="result-art" src="' + t.artworkUrl60 + '" alt="">' +
+      '<div class="result-info">' +
+        '<div class="result-name">' + t.trackName + '</div>' +
+        '<div class="result-artist">' + t.artistName + ' — ' + (t.collectionName || '') + '</div>' +
+      '</div>';
     el.addEventListener('click', () => {
       loadTrack(i, true);
       resultsEl.classList.remove('show');
@@ -585,27 +534,30 @@ function renderResults() {
 }
 
 btnPlay.addEventListener('click', () => {
-  if (!tracks.length) return;
-  if (!audio.src) { loadTrack(currentIdx, true); return; }
-  if (isPlaying) {
-    audio.pause();
+  if (!tracks.length || !ytReady || !ytPlayer) return;
+  const state = ytPlayer.getPlayerState();
+  if (state === YT.PlayerState.PLAYING) {
+    ytPlayer.pauseVideo();
+  } else if (state === -1 || state === undefined) {
+    loadTrack(currentIdx, true);
   } else {
-    audio.play().then(() => setPlaying(true)).catch(() => {});
+    ytPlayer.playVideo();
   }
 });
 
 btnNext.addEventListener('click', () => {
   if (!tracks.length) return;
-  const next = shuffle
-    ? Math.floor(Math.random() * tracks.length)
-    : (currentIdx + 1) % tracks.length;
+  const next = shuffle ? Math.floor(Math.random() * tracks.length) : (currentIdx + 1) % tracks.length;
   loadTrack(next, true);
 });
 
 btnPrev.addEventListener('click', () => {
   if (!tracks.length) return;
-  if (audio.currentTime > 3) { audio.currentTime = 0; return; }
-  loadTrack((currentIdx - 1 + tracks.length) % tracks.length, true);
+  if (ytReady && ytPlayer && ytPlayer.getCurrentTime() > 3) {
+    ytPlayer.seekTo(0, true);
+  } else {
+    loadTrack((currentIdx - 1 + tracks.length) % tracks.length, true);
+  }
 });
 
 btnShuf.addEventListener('click', () => {
@@ -614,55 +566,66 @@ btnShuf.addEventListener('click', () => {
 });
 
 btnLoop.addEventListener('click', () => {
-  looping    = !looping;
-  audio.loop = looping;
+  looping = !looping;
   btnLoop.classList.toggle('toggled', looping);
 });
 
-audio.addEventListener('timeupdate', () => {
-  if (!audio.duration || isSeeking) return;
-  const pct = (audio.currentTime / audio.duration) * 100;
-  progFill.style.transition = 'width 0.5s linear';
-  progFill.style.width      = pct + '%';
-  timeCur.textContent       = fmt(audio.currentTime);
-  timeTot.textContent       = fmt(audio.duration);
-});
-
-audio.addEventListener('ended', () => {
-  if (looping) return;
-  const next = shuffle
-    ? Math.floor(Math.random() * tracks.length)
-    : (currentIdx + 1) % tracks.length;
-  loadTrack(next, true);
-});
-
-audio.addEventListener('play',  () => setPlaying(true));
-audio.addEventListener('pause', () => setPlaying(false));
-
 progressWrap.addEventListener('mousedown', e => {
-  if (!audio.duration) return;
+  if (!ytReady || !ytPlayer) return;
+  const dur = ytPlayer.getDuration();
+  if (!dur) return;
   isSeeking = true;
   const rect = progressWrap.getBoundingClientRect();
-  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  progFill.style.transition = 'none';
-  progFill.style.width      = (pct * 100) + '%';
-  audio.currentTime         = pct * audio.duration;
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  progFill.style.width = (pct * 100) + '%';
+  ytPlayer.seekTo(pct * dur, true);
 });
 
 progressWrap.addEventListener('mousemove', e => {
-  if (!isSeeking || !audio.duration) return;
+  if (!isSeeking || !ytReady || !ytPlayer) return;
+  const dur = ytPlayer.getDuration();
+  if (!dur) return;
   const rect = progressWrap.getBoundingClientRect();
-  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
   progFill.style.width = (pct * 100) + '%';
-  audio.currentTime    = pct * audio.duration;
+  ytPlayer.seekTo(pct * dur, true);
 });
 
 document.addEventListener('mouseup', () => { isSeeking = false; });
 
 volSlider.addEventListener('input', () => {
-  audio.volume       = volSlider.value / 100;
+  if (ytReady && ytPlayer) ytPlayer.setVolume(parseInt(volSlider.value));
   volVal.textContent = volSlider.value + '%';
 });
+
+function fetchTracks(q) {
+  if (q.length < 2) { resultsEl.classList.remove('show'); return; }
+  resultsEl.innerHTML = '<div class="result-empty">🔍 searching...</div>';
+  resultsEl.classList.add('show');
+
+  const cbName = 'itcb_' + Date.now();
+  const script = document.createElement('script');
+
+  window[cbName] = function (data) {
+    tracks = (data.results || []).filter(t => t.previewUrl);
+    delete window[cbName];
+    script.remove();
+    if (!tracks.length) {
+      resultsEl.innerHTML = '<div class="result-empty">no results found</div>';
+      return;
+    }
+    renderResults();
+  };
+
+  script.onerror = function () {
+    resultsEl.innerHTML = '<div class="result-empty">search failed — check connection</div>';
+    delete window[cbName];
+    script.remove();
+  };
+
+  script.src = 'https://itunes.apple.com/search?term=' + encodeURIComponent(q) + '&media=music&entity=song&limit=15&callback=' + cbName;
+  document.head.appendChild(script);
+}
 
 searchEl.addEventListener('input', () => {
   clearTimeout(searchTimer);
@@ -672,66 +635,43 @@ searchEl.addEventListener('input', () => {
 });
 
 document.addEventListener('click', e => {
-  if (!resultsEl.contains(e.target) && e.target !== searchEl) {
-    resultsEl.classList.remove('show');
-  }
+  if (!resultsEl.contains(e.target) && e.target !== searchEl) resultsEl.classList.remove('show');
 });
 
 const mascotCanvas = document.getElementById('mascot');
 const mctx = mascotCanvas.getContext('2d');
 mctx.imageSmoothingEnabled = false;
 
-let mascotPlaying = false;
-let blinkActive = false;
+let mascotPlaying  = false;
+let blinkActive    = false;
 let blinkScheduled = 0;
 
 const P = 4;
 const C = ['', '#9b59ff', '#ffffff', '#ff59c2', '#6b3acc', '#1a0a3a'];
 
 const CAT = [
-  [0,0,1,0,0,0,1,0,0,0],
-  [0,1,1,1,0,1,1,1,0,0],
-  [0,1,3,1,1,1,3,1,0,0],
-  [1,1,1,1,1,1,1,1,1,0],
-  [1,1,2,2,1,2,2,1,1,0],
-  [1,1,2,5,1,2,5,1,1,0],
-  [1,1,1,1,1,1,1,1,1,0],
-  [1,1,1,3,1,1,3,1,1,0],
-  [1,1,1,1,1,1,1,1,1,0],
-  [0,1,1,1,1,1,1,1,0,0],
-  [0,0,1,1,1,1,1,0,0,0],
-  [0,0,1,0,0,0,1,0,0,0],
-  [0,0,1,1,0,1,1,0,0,0],
+  [0,0,1,0,0,0,1,0,0,0],[0,1,1,1,0,1,1,1,0,0],[0,1,3,1,1,1,3,1,0,0],
+  [1,1,1,1,1,1,1,1,1,0],[1,1,2,2,1,2,2,1,1,0],[1,1,2,5,1,2,5,1,1,0],
+  [1,1,1,1,1,1,1,1,1,0],[1,1,1,3,1,1,3,1,1,0],[1,1,1,1,1,1,1,1,1,0],
+  [0,1,1,1,1,1,1,1,0,0],[0,0,1,1,1,1,1,0,0,0],[0,0,1,0,0,0,1,0,0,0],[0,0,1,1,0,1,1,0,0,0],
 ];
 
 const CAT_BLINK = [
-  [0,0,1,0,0,0,1,0,0,0],
-  [0,1,1,1,0,1,1,1,0,0],
-  [0,1,3,1,1,1,3,1,0,0],
-  [1,1,1,1,1,1,1,1,1,0],
-  [1,1,1,1,1,1,1,1,1,0],
-  [1,1,4,4,1,4,4,1,1,0],
-  [1,1,1,1,1,1,1,1,1,0],
-  [1,1,1,3,1,1,3,1,1,0],
-  [1,1,1,1,1,1,1,1,1,0],
-  [0,1,1,1,1,1,1,1,0,0],
-  [0,0,1,1,1,1,1,0,0,0],
-  [0,0,1,0,0,0,1,0,0,0],
-  [0,0,1,1,0,1,1,0,0,0],
+  [0,0,1,0,0,0,1,0,0,0],[0,1,1,1,0,1,1,1,0,0],[0,1,3,1,1,1,3,1,0,0],
+  [1,1,1,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,0],[1,1,4,4,1,4,4,1,1,0],
+  [1,1,1,1,1,1,1,1,1,0],[1,1,1,3,1,1,3,1,1,0],[1,1,1,1,1,1,1,1,1,0],
+  [0,1,1,1,1,1,1,1,0,0],[0,0,1,1,1,1,1,0,0,0],[0,0,1,0,0,0,1,0,0,0],[0,0,1,1,0,1,1,0,0,0],
 ];
 
 function drawMascot(ts) {
   mctx.clearRect(0, 0, mascotCanvas.width, mascotCanvas.height);
-
   if (ts - blinkScheduled > 3000 + Math.random() * 2000) {
     blinkActive = true;
     setTimeout(() => { blinkActive = false; }, 140);
     blinkScheduled = ts;
   }
-
   const bounce = mascotPlaying ? Math.sin(ts / 220) * 5 : 0;
   const frame  = blinkActive ? CAT_BLINK : CAT;
-
   mctx.save();
   mctx.translate(0, Math.round(bounce) + 8);
   frame.forEach((row, y) => {
@@ -742,12 +682,8 @@ function drawMascot(ts) {
     });
   });
   mctx.restore();
-
   requestAnimationFrame(drawMascot);
 }
-
-audio.addEventListener('play',  () => document.body.classList.add('playing'));
-audio.addEventListener('pause', () => document.body.classList.remove('playing'));
 
 requestAnimationFrame(drawMascot);
 
@@ -758,40 +694,26 @@ sctx.imageSmoothingEnabled = false;
 const SC = ['', '#1a0a00', '#c8956a', '#f0dfc0', '#e8829a', '#7a4a2a', '#8b1a1a', '#c0302a'];
 
 const SCREAM = [
-  [0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0],
-  [0,0,1,4,4,1,0,1,4,4,1,0,0,0,0,0],
-  [0,1,4,4,2,2,1,2,2,4,4,1,0,0,0,0],
-  [1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
-  [1,2,5,5,2,2,2,2,2,5,5,2,1,0,0,0],
-  [1,2,2,2,4,2,2,4,2,2,2,2,1,0,0,0],
-  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
-  [1,3,3,1,1,1,1,1,1,1,3,3,1,0,0,0],
-  [1,3,1,6,6,6,6,6,6,6,1,3,1,0,0,0],
-  [1,3,1,6,7,7,7,7,7,6,1,3,1,0,0,0],
-  [1,3,1,6,7,7,7,7,7,6,1,3,1,0,0,0],
-  [1,3,3,1,1,1,1,1,1,1,3,3,1,0,0,0],
-  [0,1,3,3,3,3,3,3,3,3,3,1,0,0,0,0],
-  [0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+  [0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0],[0,0,1,4,4,1,0,1,4,4,1,0,0,0,0,0],
+  [0,1,4,4,2,2,1,2,2,4,4,1,0,0,0,0],[1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
+  [1,2,5,5,2,2,2,2,2,5,5,2,1,0,0,0],[1,2,2,2,4,2,2,4,2,2,2,2,1,0,0,0],
+  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],[1,3,3,1,1,1,1,1,1,1,3,3,1,0,0,0],
+  [1,3,1,6,6,6,6,6,6,6,1,3,1,0,0,0],[1,3,1,6,7,7,7,7,7,6,1,3,1,0,0,0],
+  [1,3,1,6,7,7,7,7,7,6,1,3,1,0,0,0],[1,3,3,1,1,1,1,1,1,1,3,3,1,0,0,0],
+  [0,1,3,3,3,3,3,3,3,3,3,1,0,0,0,0],[0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
 ];
 
 const CALM = [
-  [0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0],
-  [0,0,1,4,4,1,0,1,4,4,1,0,0,0,0,0],
-  [0,1,4,4,2,2,1,2,2,4,4,1,0,0,0,0],
-  [1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
-  [1,2,5,5,2,2,2,2,2,5,5,2,1,0,0,0],
-  [1,2,2,2,4,2,2,4,2,2,2,2,1,0,0,0],
-  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
-  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
-  [1,3,3,1,1,3,3,3,1,1,3,3,1,0,0,0],
-  [1,3,3,1,1,3,3,3,1,1,3,3,1,0,0,0],
-  [1,3,3,3,3,3,1,3,3,3,3,3,1,0,0,0],
-  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
-  [0,1,3,3,3,3,3,3,3,3,3,1,0,0,0,0],
-  [0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+  [0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0],[0,0,1,4,4,1,0,1,4,4,1,0,0,0,0,0],
+  [0,1,4,4,2,2,1,2,2,4,4,1,0,0,0,0],[1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0],
+  [1,2,5,5,2,2,2,2,2,5,5,2,1,0,0,0],[1,2,2,2,4,2,2,4,2,2,2,2,1,0,0,0],
+  [1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],[1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
+  [1,3,3,1,1,3,3,3,1,1,3,3,1,0,0,0],[1,3,3,1,1,3,3,3,1,1,3,3,1,0,0,0],
+  [1,3,3,3,3,3,1,3,3,3,3,3,1,0,0,0],[1,3,3,3,3,3,3,3,3,3,3,3,1,0,0,0],
+  [0,1,3,3,3,3,3,3,3,3,3,1,0,0,0,0],[0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
 ];
 
-const SP = 5; 
+const SP = 5;
 let screamState = false;
 let screamHeld  = false;
 
@@ -810,21 +732,118 @@ screamCanvas.addEventListener('click', () => {
   screamState = !screamState;
   drawScreamCat(screamState ? SCREAM : CALM);
 });
-
-screamCanvas.addEventListener('mouseenter', () => {
-  screamHeld = true;
-  drawScreamCat(SCREAM);
-});
-screamCanvas.addEventListener('mouseleave', () => {
-  screamHeld = false;
-  drawScreamCat(screamState ? SCREAM : CALM);
-});
-
-audio.addEventListener('play',  () => drawScreamCat(SCREAM));
-audio.addEventListener('pause', () => { if (!screamHeld) drawScreamCat(CALM); });
+screamCanvas.addEventListener('mouseenter', () => { screamHeld = true; drawScreamCat(SCREAM); });
+screamCanvas.addEventListener('mouseleave', () => { screamHeld = false; drawScreamCat(screamState ? SCREAM : CALM); });
 
 drawScreamCat(CALM);
 
+const btnLyrics      = document.getElementById('btnLyrics');
+const lyricsPanel    = document.getElementById('lyricsPanel');
+const lyricsBody     = document.getElementById('lyricsBody');
+const lyricsStatus   = document.getElementById('lyricsStatus');
+const lyricsSongName = document.getElementById('lyricsSongName');
+
+let lyricsOpen    = false;
+let lyricsLoading = false;
+let lastLyricsKey = '';
+
+function resetLyrics() {
+  lastLyricsKey = '';
+  lyricsLoading = false;
+  if (lyricsOpen) {
+    lyricsBody.innerHTML = '<div class="lyrics-placeholder">Click GENERATE LYRICS for this track ↑</div>';
+    lyricsStatus.textContent = 'READY';
+    btnLyrics.textContent = '♪ GENERATE LYRICS';
+    btnLyrics.classList.remove('active');
+  }
+}
+
+btnLyrics.addEventListener('click', async () => {
+  if (!tracks.length || !tracks[currentIdx]) {
+    lyricsBody.innerHTML = '<div class="lyrics-placeholder">⚠ Play a song first!</div>';
+    lyricsPanel.classList.add('open');
+    lyricsOpen = true;
+    return;
+  }
+
+  const track = tracks[currentIdx];
+  const key = track.trackName + '|' + track.artistName;
+
+  if (lyricsOpen && lastLyricsKey === key && !lyricsLoading) {
+    lyricsPanel.classList.remove('open');
+    lyricsOpen = false;
+    btnLyrics.classList.remove('active');
+    btnLyrics.textContent = '♪ GENERATE LYRICS';
+    return;
+  }
+
+  lyricsPanel.classList.add('open');
+  lyricsOpen = true;
+  btnLyrics.classList.add('active');
+
+  if (lyricsLoading || lastLyricsKey === key) return;
+
+  lyricsLoading = true;
+  lastLyricsKey = key;
+  lyricsSongName.textContent = track.trackName + ' — ' + track.artistName;
+  lyricsStatus.textContent   = 'GENERATING...';
+  btnLyrics.textContent      = '♪ GENERATING...';
+  lyricsBody.innerHTML       = '<span id="lyricsStream"></span><span class="lyrics-cursor"></span>';
+
+  const streamEl = document.getElementById('lyricsStream');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        stream: true,
+        system: 'You are a creative lyricist. Write vivid, authentic-sounding lyrics inspired by the given song title and artist. Match their genre and style. Format with sections like [Verse 1], [Chorus], [Bridge]. Keep it to 16-20 lines. Return only the lyrics with no extra commentary.',
+        messages: [{
+          role: 'user',
+          content: 'Write lyrics inspired by "' + track.trackName + '" by ' + track.artistName + '. Genre: ' + (track.primaryGenreName || 'pop') + '.'
+        }]
+      })
+    });
+
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const obj = JSON.parse(raw);
+          if (obj.type === 'content_block_delta' && obj.delta?.text) {
+            streamEl.textContent += obj.delta.text;
+            lyricsBody.scrollTop  = lyricsBody.scrollHeight;
+          }
+        } catch {}
+      }
+    }
+
+    lyricsStatus.textContent = 'AI GENERATED';
+    btnLyrics.textContent    = '♪ LYRICS ✓';
+    lyricsBody.querySelector('.lyrics-cursor')?.remove();
+  } catch (err) {
+    lyricsBody.innerHTML     = '<div class="lyrics-placeholder">⚠ Could not generate lyrics.<br>' + err.message + '</div>';
+    lyricsStatus.textContent = 'ERROR';
+    btnLyrics.textContent    = '♪ RETRY LYRICS';
+    lastLyricsKey            = '';
+  } finally {
+    lyricsLoading = false;
+  }
+});
 </script>
 </body>
 </html>

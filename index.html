@@ -131,6 +131,7 @@
     .np-tag { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); margin-bottom: 4px; }
     .np-title { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
     .np-artist { font-size: 11px; color: var(--muted); }
+    .preview-badge { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--purple); margin-top: 3px; opacity: 0.7; }
 
     .viz-wrap {
       margin-bottom: 20px; background: var(--bg3);
@@ -226,10 +227,6 @@
 </head>
 <body>
 
-<div style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;">
-  <div id="ytPlayer"></div>
-</div>
-
 <div class="player">
   <canvas id="scream-cat" width="80" height="70" title="Click me!"></canvas>
   <canvas id="mascot" width="40" height="68"></canvas>
@@ -270,7 +267,8 @@
     <div class="np-info">
       <div class="np-tag">▶ now_playing</div>
       <div class="np-title" id="npTitle">Search for a song...</div>
-      <div class="np-artist" id="npArtist">indie.fm player</div>
+      <div class="np-artist" id="npArtist">itunes preview player</div>
+      <div class="preview-badge" id="previewBadge"></div>
     </div>
   </div>
 
@@ -327,6 +325,7 @@ const resultsEl    = document.getElementById('results');
 const npArt        = document.getElementById('npArt');
 const npTitle      = document.getElementById('npTitle');
 const npArtist     = document.getElementById('npArtist');
+const previewBadge = document.getElementById('previewBadge');
 const btnPlay      = document.getElementById('btnPlay');
 const btnLoop      = document.getElementById('btnLoop');
 const btnShuf      = document.getElementById('btnShuffle');
@@ -340,16 +339,18 @@ const progressWrap = document.getElementById('progressWrap');
 const volSlider    = document.getElementById('volSlider');
 const volVal       = document.getElementById('volVal');
 
-let tracks        = [];
-let currentIdx    = 0;
-let shuffle       = false;
-let looping       = false;
-let isPlaying     = false;
-let isSeeking     = false;
-let vizTimer      = null;
-let searchTimer   = null;
-let progressTimer = null;
-let loadSeq       = 0;
+let tracks      = [];
+let currentIdx  = 0;
+let shuffle     = false;
+let looping     = false;
+let isPlaying   = false;
+let isSeeking   = false;
+let vizTimer    = null;
+let searchTimer = null;
+let progTimer   = null;
+
+const audio = new Audio();
+audio.volume = 0.8;
 
 const vizBars = [];
 for (let i = 0; i < 40; i++) {
@@ -386,135 +387,38 @@ function setPlaying(state) {
 }
 
 function startProgress() {
-  clearInterval(progressTimer);
-  progressTimer = setInterval(() => {
-    if (!ytPlayer || !ytReady || isSeeking) return;
-    try {
-      const cur = ytPlayer.getCurrentTime() || 0;
-      const dur = ytPlayer.getDuration() || 0;
-      if (!dur) return;
+  clearInterval(progTimer);
+  progTimer = setInterval(() => {
+    if (isSeeking) return;
+    const cur = audio.currentTime || 0;
+    const dur = audio.duration || 0;
+    if (dur) {
       progFill.style.width = (cur / dur * 100) + '%';
       timeCur.textContent  = fmt(cur);
       timeTot.textContent  = fmt(dur);
-    } catch {}
+    }
   }, 500);
 }
 
 function stopProgress() {
-  clearInterval(progressTimer);
+  clearInterval(progTimer);
 }
 
-let ytPlayer = null;
-let ytReady  = false;
-let ytQueue  = [];
-
-window.onYouTubeIframeAPIReady = function () {
-  ytPlayer = new YT.Player('ytPlayer', {
-    width: '1', height: '1',
-    playerVars: {
-      autoplay: 0, controls: 0, disablekb: 1,
-      fs: 0, iv_load_policy: 3, rel: 0, modestbranding: 1
-    },
-    events: {
-      onReady() {
-        ytReady = true;
-        ytPlayer.setVolume(parseInt(volSlider.value));
-        ytQueue.forEach(fn => fn());
-        ytQueue = [];
-      },
-      onStateChange(e) {
-        if (e.data === YT.PlayerState.PLAYING) {
-          setPlaying(true);
-          startProgress();
-        } else if (e.data === YT.PlayerState.PAUSED) {
-          setPlaying(false);
-          stopProgress();
-        } else if (e.data === YT.PlayerState.ENDED) {
-          setPlaying(false);
-          stopProgress();
-          if (looping) {
-            ytPlayer.seekTo(0, true);
-            ytPlayer.playVideo();
-          } else {
-            const next = shuffle
-              ? Math.floor(Math.random() * tracks.length)
-              : (currentIdx + 1) % tracks.length;
-            loadTrack(next, true);
-          }
-        }
-      }
-    }
-  });
-};
-
-(function () {
-  const s = document.createElement('script');
-  s.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(s);
-})();
-
-async function fetchWithTimeout(url, ms) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), ms);
-  try {
-    const res = await fetch(url, { signal: ctrl.signal });
-    clearTimeout(timer);
-    return res;
-  } catch (e) {
-    clearTimeout(timer);
-    throw e;
+audio.addEventListener('play',  () => { setPlaying(true);  startProgress(); });
+audio.addEventListener('pause', () => { setPlaying(false); stopProgress();  });
+audio.addEventListener('ended', () => {
+  setPlaying(false);
+  stopProgress();
+  if (looping) {
+    audio.currentTime = 0;
+    audio.play();
+  } else {
+    const next = shuffle
+      ? Math.floor(Math.random() * tracks.length)
+      : (currentIdx + 1) % tracks.length;
+    loadTrack(next, true);
   }
-}
-
-function extractVideoId(urlStr) {
-  if (!urlStr) return null;
-  const m = urlStr.match(/(?:v=|\/watch\/|youtu\.be\/|\/videos?\/)([A-Za-z0-9_-]{11})/);
-  return m ? m[1] : null;
-}
-
-async function findVideoId(trackName, artistName) {
-  const q = encodeURIComponent(trackName + ' ' + artistName + ' audio');
-
-  const pipedEndpoints = [
-    'https://pipedapi.kavin.rocks/search?q=' + q + '&filter=videos',
-    'https://api.piped.projectsegfau.lt/search?q=' + q + '&filter=videos',
-    'https://pipedapi.adminforge.de/search?q=' + q + '&filter=videos',
-    'https://piped-api.garudalinux.org/search?q=' + q + '&filter=videos',
-  ];
-
-  for (const url of pipedEndpoints) {
-    try {
-      const res = await fetchWithTimeout(url, 5000);
-      if (!res.ok) continue;
-      const data = await res.json();
-      const items = data.items || [];
-      const stream = items.find(i => i.type === 'stream');
-      if (stream) {
-        const id = extractVideoId(stream.url) || stream.videoId || stream.id;
-        if (id) return id;
-      }
-    } catch (_) {}
-  }
-
-  const invidiousEndpoints = [
-    'https://invidious.snopyta.org/api/v1/search?q=' + q + '&type=video',
-    'https://invidious.namazso.eu/api/v1/search?q=' + q + '&type=video',
-    'https://vid.puffyan.us/api/v1/search?q=' + q + '&type=video',
-    'https://invidious.privacyredirect.com/api/v1/search?q=' + q + '&type=video',
-  ];
-
-  for (const url of invidiousEndpoints) {
-    try {
-      const res = await fetchWithTimeout(url, 5000);
-      if (!res.ok) continue;
-      const data = await res.json();
-      const video = Array.isArray(data) && data.find(v => v.type === 'video' && v.videoId);
-      if (video && video.videoId) return video.videoId;
-    } catch (_) {}
-  }
-
-  return null;
-}
+});
 
 function updateActiveResult() {
   document.querySelectorAll('.result-item').forEach((el, i) => {
@@ -522,34 +426,26 @@ function updateActiveResult() {
   });
 }
 
-async function loadTrack(idx, autoplay) {
+function loadTrack(idx, autoplay) {
   if (!tracks.length) return;
   currentIdx = idx;
-  const seq = ++loadSeq;
   const t = tracks[idx];
 
+  audio.pause();
+  audio.src = t.previewUrl;
+
   npTitle.textContent  = t.trackName;
-  npArtist.textContent = '🔍 searching YouTube (trying multiple sources...)';
-  npArt.src            = t.artworkUrl100 || '';
-  npArt.onerror        = () => { npArt.src = ''; };
+  npArtist.textContent = t.artistName;
+  previewBadge.textContent = '30s iTunes preview';
+  npArt.src = t.artworkUrl100 || '';
+  npArt.onerror = () => { npArt.src = ''; };
   progFill.style.width = '0%';
   timeCur.textContent  = '0:00';
   timeTot.textContent  = '0:00';
   updateActiveResult();
   resetLyrics();
 
-  const videoId = await findVideoId(t.trackName, t.artistName);
-  if (seq !== loadSeq) return;
-
-  if (!videoId) {
-    npArtist.textContent = '⚠ All YouTube lookup APIs unavailable — please try again in a moment';
-    return;
-  }
-
-  npArtist.textContent = t.artistName;
-
-  const go = () => autoplay ? ytPlayer.loadVideoById(videoId) : ytPlayer.cueVideoById(videoId);
-  ytReady ? go() : ytQueue.push(go);
+  if (autoplay) audio.play();
 }
 
 function renderResults() {
@@ -573,15 +469,9 @@ function renderResults() {
 }
 
 btnPlay.addEventListener('click', () => {
-  if (!tracks.length || !ytReady || !ytPlayer) return;
-  const state = ytPlayer.getPlayerState();
-  if (state === YT.PlayerState.PLAYING) {
-    ytPlayer.pauseVideo();
-  } else if (state === -1 || state === undefined) {
-    loadTrack(currentIdx, true);
-  } else {
-    ytPlayer.playVideo();
-  }
+  if (!tracks.length) return;
+  if (!audio.src) { loadTrack(currentIdx, true); return; }
+  isPlaying ? audio.pause() : audio.play();
 });
 
 btnNext.addEventListener('click', () => {
@@ -592,8 +482,8 @@ btnNext.addEventListener('click', () => {
 
 btnPrev.addEventListener('click', () => {
   if (!tracks.length) return;
-  if (ytReady && ytPlayer && ytPlayer.getCurrentTime() > 3) {
-    ytPlayer.seekTo(0, true);
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
   } else {
     loadTrack((currentIdx - 1 + tracks.length) % tracks.length, true);
   }
@@ -610,30 +500,26 @@ btnLoop.addEventListener('click', () => {
 });
 
 progressWrap.addEventListener('mousedown', e => {
-  if (!ytReady || !ytPlayer) return;
-  const dur = ytPlayer.getDuration();
-  if (!dur) return;
+  if (!audio.duration) return;
   isSeeking = true;
   const rect = progressWrap.getBoundingClientRect();
-  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
   progFill.style.width = (pct * 100) + '%';
-  ytPlayer.seekTo(pct * dur, true);
+  audio.currentTime    = pct * audio.duration;
 });
 
 progressWrap.addEventListener('mousemove', e => {
-  if (!isSeeking || !ytReady || !ytPlayer) return;
-  const dur = ytPlayer.getDuration();
-  if (!dur) return;
+  if (!isSeeking || !audio.duration) return;
   const rect = progressWrap.getBoundingClientRect();
-  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
   progFill.style.width = (pct * 100) + '%';
-  ytPlayer.seekTo(pct * dur, true);
+  audio.currentTime    = pct * audio.duration;
 });
 
 document.addEventListener('mouseup', () => { isSeeking = false; });
 
 volSlider.addEventListener('input', () => {
-  if (ytReady && ytPlayer) ytPlayer.setVolume(parseInt(volSlider.value));
+  audio.volume = parseInt(volSlider.value) / 100;
   volVal.textContent = volSlider.value + '%';
 });
 
@@ -645,8 +531,8 @@ function fetchTracks(q) {
   const cbName = 'itcb_' + Date.now();
   const script = document.createElement('script');
 
-  window[cbName] = function (data) {
-    tracks = (data.results || []).filter(t => t.trackName && t.artistName);
+  window[cbName] = function(data) {
+    tracks = (data.results || []).filter(t => t.previewUrl);
     delete window[cbName];
     script.remove();
     if (!tracks.length) {
@@ -656,7 +542,7 @@ function fetchTracks(q) {
     renderResults();
   };
 
-  script.onerror = function () {
+  script.onerror = function() {
     resultsEl.innerHTML = '<div class="result-empty">search failed — check connection</div>';
     delete window[cbName];
     script.remove();
@@ -697,7 +583,7 @@ const CAT = [
 
 const CAT_BLINK = [
   [0,0,1,0,0,0,1,0,0,0],[0,1,1,1,0,1,1,1,0,0],[0,1,3,1,1,1,3,1,0,0],
-  [1,1,1,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,0],[1,1,4,4,1,4,4,1,1,0],
+  [1,1,1,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,0],
   [1,1,1,1,1,1,1,1,1,0],[1,1,1,3,1,1,3,1,1,0],[1,1,1,1,1,1,1,1,1,0],
   [0,1,1,1,1,1,1,1,0,0],[0,0,1,1,1,1,1,0,0,0],[0,0,1,0,0,0,1,0,0,0],[0,0,1,1,0,1,1,0,0,0],
 ];
@@ -771,7 +657,7 @@ screamCanvas.addEventListener('click', () => {
   screamState = !screamState;
   drawScreamCat(screamState ? SCREAM : CALM);
 });
-screamCanvas.addEventListener('mouseenter', () => { screamHeld = true; drawScreamCat(SCREAM); });
+screamCanvas.addEventListener('mouseenter', () => { screamHeld = true;  drawScreamCat(SCREAM); });
 screamCanvas.addEventListener('mouseleave', () => { screamHeld = false; drawScreamCat(screamState ? SCREAM : CALM); });
 
 drawScreamCat(CALM);
@@ -792,7 +678,7 @@ function resetLyrics() {
   if (lyricsOpen) {
     lyricsBody.innerHTML = '<div class="lyrics-placeholder">Click GENERATE LYRICS for this track ↑</div>';
     lyricsStatus.textContent = 'READY';
-    btnLyrics.textContent = '♪ GENERATE LYRICS';
+    btnLyrics.textContent    = '♪ GENERATE LYRICS';
     btnLyrics.classList.remove('active');
   }
 }
@@ -806,7 +692,7 @@ btnLyrics.addEventListener('click', async () => {
   }
 
   const track = tracks[currentIdx];
-  const key = track.trackName + '|' + track.artistName;
+  const key   = track.trackName + '|' + track.artistName;
 
   if (lyricsOpen && lastLyricsKey === key && !lyricsLoading) {
     lyricsPanel.classList.remove('open');
@@ -822,8 +708,8 @@ btnLyrics.addEventListener('click', async () => {
 
   if (lyricsLoading || lastLyricsKey === key) return;
 
-  lyricsLoading = true;
-  lastLyricsKey = key;
+  lyricsLoading    = true;
+  lastLyricsKey    = key;
   lyricsSongName.textContent = track.trackName + ' — ' + track.artistName;
   lyricsStatus.textContent   = 'GENERATING...';
   btnLyrics.textContent      = '♪ GENERATING...';

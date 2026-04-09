@@ -713,18 +713,20 @@ btnLyrics.addEventListener('click', async () => {
   lyricsSongName.textContent = track.trackName + ' — ' + track.artistName;
   lyricsStatus.textContent   = 'GENERATING...';
   btnLyrics.textContent      = '♪ GENERATING...';
-  lyricsBody.innerHTML       = '<span id="lyricsStream"></span><span class="lyrics-cursor"></span>';
-
-  const streamEl = document.getElementById('lyricsStream');
+  lyricsBody.innerHTML       = '<div class="lyrics-placeholder">⏳ generating...</div>';
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': 'placeholder',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        stream: true,
         system: 'You are a creative lyricist. Write vivid, authentic-sounding lyrics inspired by the given song title and artist. Match their genre and style. Format with sections like [Verse 1], [Chorus], [Bridge]. Keep it to 16-20 lines. Return only the lyrics with no extra commentary.',
         messages: [{
           role: 'user',
@@ -733,33 +735,17 @@ btnLyrics.addEventListener('click', async () => {
       })
     });
 
-    const reader  = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '';
+    const data = await res.json();
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split('\n');
-      buf = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const raw = line.slice(6).trim();
-        if (raw === '[DONE]') continue;
-        try {
-          const obj = JSON.parse(raw);
-          if (obj.type === 'content_block_delta' && obj.delta?.text) {
-            streamEl.textContent += obj.delta.text;
-            lyricsBody.scrollTop  = lyricsBody.scrollHeight;
-          }
-        } catch {}
-      }
-    }
+    if (!res.ok) throw new Error(data.error?.message || 'API error ' + res.status);
+
+    const text = data.content?.map(b => b.text || '').join('') || '';
+    lyricsBody.innerHTML = text
+      ? '<span style="white-space:pre-wrap">' + text + '</span>'
+      : '<div class="lyrics-placeholder">⚠ No lyrics returned.</div>';
 
     lyricsStatus.textContent = 'AI GENERATED';
     btnLyrics.textContent    = '♪ LYRICS ✓';
-    lyricsBody.querySelector('.lyrics-cursor')?.remove();
   } catch (err) {
     lyricsBody.innerHTML     = '<div class="lyrics-placeholder">⚠ Could not generate lyrics.<br>' + err.message + '</div>';
     lyricsStatus.textContent = 'ERROR';
